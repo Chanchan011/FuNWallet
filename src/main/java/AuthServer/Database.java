@@ -1,5 +1,6 @@
 package AuthServer;
 
+
 import java.sql.*;
 
 public class Database {

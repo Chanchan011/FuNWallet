@@ -1,8 +1,8 @@
 package AppControl;
 
 public class Status {
-    public static final int VALID_TRANSACTION = 0;
-    public static final int USER_NOT_FOUND = 1;
-    public static final int INCORRECT_CREDENTIALS = 2;
-    public static final int INVALID_AMOUNT = 3;
+    public static String TransactionApproved = "0";
+    public static String UserNotFound = "1";
+    public static String IncorrectPassword = "2";
+    public static String InvalidAmount = "3";
 }

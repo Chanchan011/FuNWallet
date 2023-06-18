@@ -1,13 +1,34 @@
 package AppControl;
 
 public class Transaction {
-    private int senderID;
-    private int receiverID;
-    private int amount;
+    private String transactionID;
+    private String studentID;
+    private double amount;
+    private String message;
+    private boolean status;
 
-    public Transaction(int senderID, int receiverID, int amount) {
-        this.senderID = senderID;
-        this.receiverID = receiverID;
-        this.amount = amount;
+    public Transaction(String input) {
+        String[] data = input.split("_");
+        transactionID = data[0];
+        studentID = data[1];
+        amount = Integer.parseInt(data[2]);
+        message = data[3];
+        status = (data[4] == "1");
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public String getStudentID() {
+        return studentID;
+    }
+
+    public String getTransactionID() {
+        return transactionID;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

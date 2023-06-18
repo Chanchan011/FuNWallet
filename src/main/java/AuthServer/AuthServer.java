@@ -28,7 +28,6 @@ public class AuthServer {
         private final Database database = Database.getDatabase();
         private boolean login = false, quit = false;
         double balance = 0;
-        private PrintWriter studentWriter;
 
         public ClientHandler(Socket studentSocket) {
             this.studentSocket = studentSocket;
@@ -36,11 +35,11 @@ public class AuthServer {
 
         public void run() {
             try {
-                BufferedReader studentReader = new BufferedReader(new InputStreamReader(studentSocket.getInputStream()));
-                studentWriter = new PrintWriter(studentSocket.getOutputStream(), true);
+                DataInputStream dataInputStream = new DataInputStream(studentSocket.getInputStream());
+                DataOutputStream dataOutputStream = new DataOutputStream(studentSocket.getOutputStream());
 
                 String message;
-                while ((message = studentReader.readLine()) != null) {
+                while ((message = dataInputStream.readUTF()) != null) {
                     if(quit) {
                         break;
                     }
@@ -52,14 +51,14 @@ public class AuthServer {
                             String[] splitString = message.split("_");
                             String ID = splitString[0];
                             String password = splitString[1];
-                            if (database.checkID(ID).equals(null)) {
-                                studentWriter.println("Wrong ID");
+                            if (database.checkID(ID) == null) {
+                                dataOutputStream.writeUTF("Wrong ID");
                             } else if (!database.checkID(ID).equals(password)) {
-                                studentWriter.println("Wrong password");
+                                dataOutputStream.writeUTF("Wrong password");
                             } else {
                                 login = true;
                                 balance = database.getBalance(ID);
-                                studentWriter.println(balance);
+                                dataOutputStream.writeDouble(balance);
                             }
                         }
                     } else {
@@ -69,17 +68,17 @@ public class AuthServer {
                         else if (message.contains("INFO")){
                             String[] splitString = message.split("_");
                             String studentID = splitString[1];
-                            studentWriter.println(database.getStudentInfo(studentID));
+                            dataOutputStream.writeUTF(database.getStudentInfo(studentID));
                         }
                         else if (message.contains("SHOWTRANS")) {
                             String[] splitString = message.split("_");
                             String studentID = splitString[1];
-                            studentWriter.println(database.getTransactionInfo(studentID));
+                            dataOutputStream.writeUTF(database.getTransactionInfo(studentID));
                         }
                         else if (message.contains("SHOWDEBT")) {
                             String[] splitString = message.split("_");
                             String studentID = splitString[1];
-                            studentWriter.println(database.getDebtInfo(studentID));
+                            dataOutputStream.writeUTF(database.getDebtInfo(studentID));
                         }
                         else if (message.contains("ADD")) {
                             String[] splitString = message.split("_");
@@ -87,7 +86,7 @@ public class AuthServer {
                             double amount = Double.parseDouble(splitString[2]);
                             database.updateTransaction('O', studentID, amount, 1);
                             balance = balance + amount;
-                            studentWriter.println(balance);
+                            dataOutputStream.writeDouble(balance);
                         }
                         else if(message.contains("SUB")) {
                             String[] splitString = message.split("_");
@@ -96,10 +95,10 @@ public class AuthServer {
                             if(balance >= amount) {
                                 database.updateTransaction('O', studentID, -1 * amount, 1);
                                 balance = balance - amount;
-                                studentWriter.println(balance);
+                                dataOutputStream.writeDouble(balance);
                             }
                             else {
-                                studentWriter.println("Error! You don't have enough money.");
+                                dataOutputStream.writeUTF("Error! You don't have enough money.");
                             }
                         }
                         else if(message.contains("PAY")) {
@@ -108,20 +107,20 @@ public class AuthServer {
                             String transactionID = splitString[2];
                             String compareID = database.checkTransaction(transactionID);
                             if(compareID == null) {
-                                studentWriter.println("404 Not found");
+                                dataOutputStream.writeUTF("404 Not found");
                             }
                             else if (!compareID.equals(studentID)) {
-                                studentWriter.println("Error occur");
+                                dataOutputStream.writeUTF("Error occur");
                             }
                             else {
                                 double amount = database.getAmount(transactionID);
                                 if(balance >= amount) {
                                     database.updateTransaction('I', studentID, -1 * amount, 1);
                                     balance = balance - amount;
-                                    studentWriter.println(balance);
+                                    dataOutputStream.writeDouble(balance);
                                 }
                                 else {
-                                    studentWriter.println("Error! You don't have enough money.");
+                                    dataOutputStream.writeUTF("Error! You don't have enough money.");
                                 }
                             }
                         }
@@ -129,7 +128,12 @@ public class AuthServer {
                 }
                 studentSocket.close();
             } catch (IOException | SQLException e) {
-                throw new RuntimeException(e);
+                System.out.println("Error occur. Close the connection");
+                try {
+                    studentSocket.close();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }
