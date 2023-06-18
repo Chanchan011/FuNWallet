@@ -9,8 +9,7 @@ There are 2 parts to this project: The client application and the server. The se
 FuNWallet allows its users to withdrawl or deposit money to and from the wallet (which is currently being presented by a placeholder). Furthermore, it allows education institution to create tution fee requests that students could pay when they have enough in their balance. This application could also double as an application to manage students information, and can be updated as such should the users demand.
 ### Prerequisite
 For Client:
-+ Something
-+ Something Something
++ .NET version 7.0 or newer
 + A healthy appatite for bread :bread:
 
 For Server:
@@ -24,3 +23,7 @@ For testing purposes, it is best to utilize a virtual machine to set up the serv
 + **Compile and run:** Compile and run /src/main/java/AuthServer.java. Whether you compile it via an IDE or via commandline should not matter. You can also manually change the port on which this application runs in the aforemnetioned file.
 + **Verify Operation:** After finish compiling and running the application successfully, move on to Client installation process. In order for the application to run smoothly, the client ***MUST*** be able to ping the Server and vice versa. Any errors relating to logging in is most likely the result of networking.
 ### Client Installation Process
++ **Installing Prequisite**: Download the source code which is currently located at src/main/java/FunWallet.Client. Also remember to install [DOTNET](https://dotnet.microsoft.com/en-us/)
++ **Customization**: Update Server IP address and Port accordingly.
++ **Run Application**: Open commandline, execute *dot net* command to run the application.
++ **Verify Operation**: Check logs in and other features provided by the app. Should anything go wrong, make sure to double check data in the database, as well as connectivity between device running client and the server
