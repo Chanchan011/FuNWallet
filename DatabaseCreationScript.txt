@@ -1,0 +1,23 @@
+DROP DATABASE data;
+CREATE DATABASE data;
+USE data;
+CREATE TABLE Student (
+ID varchar(15) NOT NULL PRIMARY KEY,
+Pass varchar(30) NOT NULL,
+Name varchar(30) NOT NULL,
+Nationality varchar(30) NOT NULL);
+
+CREATE TABLE Transaction (
+ID varchar(15) NOT NULL PRIMARY KEY,
+StudentID varchar(15) NOT NULL,
+Amount int NOT NULL,
+Message varchar(120),
+Status int,
+CONSTRAINT FK_StudentTransaction FOREIGN KEY (StudentID) REFERENCES Student(ID));
+
+insert into User ('123456789','root123','Student1','Vietnam');
+insert into User ('987654321','root123','Student2','Congo');
+insert into Transaction ('O0001','123456789',1000,'test',1);
+insert into Transaction ('O0002','123456789',-200,'withdrawl',1);
+insert into Transaction ('I0001','123456789',-1500,'fee',0);
+insert into Transaction ('I0002','123456789', 1000,'scholarship',1);
