@@ -1,15 +1,14 @@
+DROP DATABASE data;
 CREATE DATABASE data;
-USE data;
-CREATE TABLE User (
+CREATE TABLE Student (
 ID varchar(15) NOT NULL PRIMARY KEY,
 Pass varchar(30) NOT NULL,
 Name varchar(30) NOT NULL,
-Balance int NOT NULL);
+Nationality varchar(30) NOT NULL);
 CREATE TABLE Transaction (
 ID varchar(15) NOT NULL PRIMARY KEY,
-SenderID varchar(15) NOT NULL,
-ReceiverID varchar(15) NOT NULL,
+StudentID varchar(15) NOT NULL,
 Amount int NOT NULL,
 Message varchar(120),
-CONSTRAINT FK_SenderTransaction FOREIGN KEY (SenderID) REFERENCES User(ID),
-CONSTRAINT FK_ReceiverTransaction FOREIGN KEY (ReceiverID) REFERENCES User(ID));
+Status int NOT NULL,
+CONSTRAINT FK_StudentTransaction FOREIGN KEY (StudentID) REFERENCES Student(ID));
