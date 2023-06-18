@@ -29,5 +29,5 @@ For testing purposes, it is best to utilize a virtual machine to set up the serv
 ### Client Installation Process
 + **Installing Prequisite**: Download the source code which is currently located at src/main/java/FunWallet.Client. Also remember to install [DOTNET](https://dotnet.microsoft.com/en-us/)
 + **Customization**: Update Server IP address and Port accordingly.
-+ **Run Application**: Open commandline, execute *dotnet run* command to run the application.
++ **Run Application**: Open commandline, execute *dotnet run* command to run FuNWallet.Client/FuNWallet.Client.Desktop/FunWallet.Client.Desktop.csproj.
 + **Verify Operation**: Check logs in and other features provided by the app. Should anything go wrong, make sure to double check data in the database, as well as connectivity between device running client and the server
