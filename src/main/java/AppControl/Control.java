@@ -1,7 +1,6 @@
 package AppControl;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +24,10 @@ public class Control {
             System.out.println("Enter password:");
             password = input.next();
             //
-            DataOutputStream request = new DataOutputStream(socket.getOutputStream());
-            DataInputStream reply = new DataInputStream(socket.getInputStream());
-            request.writeUTF(userID + "_" + password);
-            double serverReply = Double.parseDouble(reply.readUTF());
+            PrintWriter serverWriter = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            serverWriter.write(userID + "_" + password);
+            double serverReply = Double.parseDouble(serverReader.readLine());
             if (serverReply == -1) {
                 throw new InvalidCredentialException("ID or password ish wrong.");
             } else {
@@ -40,11 +39,11 @@ public class Control {
     }
 
     public Student getStudentInfo() {
-        try (Socket socket = new Socket(HOST, PORT)){
-            DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
-            dout.writeUTF("INFO_" + ID);
-            DataInputStream din = new DataInputStream(socket.getInputStream());
-            String serverReply = din.readUTF();
+        try (Socket socket = new Socket(HOST, PORT)) {
+            PrintWriter serverWriter = new PrintWriter(socket.getOutputStream(), true);
+            serverWriter.write("INFO_" + ID);
+            BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String serverReply = serverReader.readLine();
             return new Student(serverReply);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -55,11 +54,11 @@ public class Control {
     public List<Transaction> getTransactions() {
         try (Socket socket = new Socket(HOST, PORT)) {
             List<Transaction> list = new ArrayList<>();
-            DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
+            PrintWriter serverWriter = new PrintWriter(socket.getOutputStream(), true);
             String request = "SHOWTRANS_" + ID;
-            dout.writeUTF(request);
-            DataInputStream din = new DataInputStream(socket.getInputStream());
-            String serverReply = din.readUTF();
+            serverWriter.write(request);
+            BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String serverReply = serverReader.readLine();
             String[] rawData = serverReply.split("\\|");
             for (String rawDatum : rawData) {
                 list.add(new Transaction(rawDatum));
@@ -74,11 +73,11 @@ public class Control {
     public List<Transaction> getPendingTransactions() {
         try (Socket socket = new Socket(HOST, PORT)) {
             List<Transaction> list = new ArrayList<>();
-            DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
+            PrintWriter serverWriter = new PrintWriter(socket.getOutputStream(), true);
             String request = "SHOWDEBT_" + ID;
-            dout.writeUTF(request);
-            DataInputStream din = new DataInputStream(socket.getInputStream());
-            String serverReply = din.readUTF();
+            serverWriter.write(request);
+            BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String serverReply = serverReader.readLine();
             String[] rawData = serverReply.split("\\|");
             for (String rawDatum : rawData) {
                 list.add(new Transaction(rawDatum));
@@ -97,10 +96,10 @@ public class Control {
             else {request += "SUB_";}
             request += Double.toString(Math.abs(amount));
             request += "_" + ID;
-            DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
-            DataInputStream din = new DataInputStream(socket.getInputStream());
-            dout.writeUTF(request);
-            String serverReply = din.readUTF();
+            PrintWriter serverWriter = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            serverWriter.write(request);
+            String serverReply = serverReader.readLine();
             balance = Double.parseDouble(serverReply);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -112,10 +111,10 @@ public class Control {
     public boolean resolveTransaction(Transaction transaction) {
         try (Socket socket = new Socket(HOST, PORT)){
             String request = "PAY" + ID + transaction.getTransactionID();
-            DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
-            DataInputStream din = new DataInputStream(socket.getInputStream());
-            dout.writeUTF(request);
-            String reply = din.readUTF();
+            PrintWriter serverWriter = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            serverWriter.write(request);
+            String reply = serverReader.readLine();
             if (reply.equals("1")) {
                 balance += transaction.getAmount();
             } else {

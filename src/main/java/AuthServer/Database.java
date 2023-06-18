@@ -28,6 +28,7 @@ public class Database {
         if (connection == null) {
             try {
                 connection = DriverManager.getConnection(host, admin, password);
+                database.generateData();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -56,7 +57,30 @@ public class Database {
     }
 
     public void generateData() {
+        try {
+            String query = """
+                    insert into Student ('123456789','root123','Student1','Vietnam');
+                    insert into Student ('987654321','root123','Student2','Congo');
+                    insert into Transaction ('O0001','123456789',1000,'test',1);
+                    insert into Transaction ('O0002','123456789',-200,'withdraw',1);
+                    insert into Transaction ('I0001','123456789',-1500,'fee',0);
+                    insert into Transaction ('I0002','123456789', 1000,'scholarship',1)""";
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 
+    public void updateTransaction(String transactionID) throws SQLException {
+        String query = "update transaction "
+                + "set status =?" +
+                "where ID=?";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1, 1);
+        preparedStatement.setString(2, transactionID);
+        preparedStatement.executeUpdate();
     }
 
     public String getTransactionID(char type) {
@@ -67,7 +91,7 @@ public class Database {
             return "I" + getTransID();
     }
 
-    public void updateTransaction(char type, String studentID, double amount, int status) throws SQLException {
+    public void addTransaction(char type, String studentID, double amount, int status) throws SQLException {
         String transactionID = getTransactionID(type);
         String query = "INSERT INTO transaction(ID, StudentID, Amount, Message, Status)"
                 + "VALUES(?, ?, ?, ?, ?)";
