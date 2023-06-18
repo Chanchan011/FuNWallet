@@ -110,8 +110,9 @@ public class Database {
         String name = "", nationality = "";
         try {
             String query = "SELECT Name, Nationality FROM student WHERE ID = " + studentID + ";";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+            PreparedStatement statement = connection.prepareStatement("SELECT Name, Nationality FROM student WHERE ID = ?");
+            statement.setString(1, studentID);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 name = resultSet.getString(1);
                 nationality = resultSet.getString(2);
@@ -129,8 +130,9 @@ public class Database {
         String id, amount, message, status;
         try {
             String query = "SELECT ID, Amount, Message, Status FROM transaction WHERE StudentID = " + studentID + " LIMIT 10" + ";";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+            PreparedStatement statement = connection.prepareStatement("SELECT ID, Amount, Message, Status FROM transaction WHERE StudentID = ? LIMIT 10");
+            statement.setString(1, studentID);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 id = resultSet.getString(1);
                 amount = resultSet.getString(2);
@@ -152,8 +154,9 @@ public class Database {
         String id, amount, message;
         try {
             String query = "SELECT ID, Amount, Message FROM transaction WHERE StudentID = " + studentID + " AND Status = 0" + " LIMIT 10" + ";";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+            PreparedStatement statement = connection.prepareStatement("SELECT ID, Amount, Message FROM transaction WHERE StudentID = ? AND Status = 0 LIMIT 10");
+            statement.setString(1, studentID);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 id = resultSet.getString(1);
                 amount = resultSet.getString(2);
@@ -172,8 +175,9 @@ public class Database {
         String pass = "";
         try {
             String query = "SELECT Pass FROM student WHERE ID = " + studentID + ";";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+            PreparedStatement statement = connection.prepareStatement("SELECT Pass FROM student WHERE ID = ?");
+            statement.setString(1, studentID);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 pass = resultSet.getString(1);
             }
@@ -189,8 +193,9 @@ public class Database {
         String studentID = "";
         try {
             String query = "SELECT StudentID FROM transaction WHERE ID = " + transactionID + ";";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+            PreparedStatement statement = connection.prepareStatement("SELECT StudentID FROM transaction WHERE ID = ?");
+            statement.setString(1, transactionID);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 studentID = resultSet.getString(1);
             }
@@ -206,8 +211,9 @@ public class Database {
         double amount = 0;
         try {
             String query = "SELECT amount FROM transaction WHERE ID = " + transactionID + ";";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+            PreparedStatement statement = connection.prepareStatement("SELECT amount FROM transaction WHERE ID = ?");
+            statement.setString(1, transactionID);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 amount = resultSet.getDouble(1);
             }
@@ -221,8 +227,9 @@ public class Database {
         double balance = 0;
         try {
             String query = "SELECT SUM(Amount) FROM Transaction WHERE ID = " + studentID + " AND Status = 1" + ";";
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
+            PreparedStatement statement = connection.prepareStatement("SELECT SUM(Amount) FROM Transaction WHERE StudentID = ? AND Status = 1");
+            statement.setString(1, studentID);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 balance = resultSet.getDouble(1);
             }
