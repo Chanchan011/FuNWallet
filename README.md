@@ -7,6 +7,10 @@ Building an entire blockchain, generally speaking, is a time-consuming and a ver
 There are 2 parts to this project: The client application and the server. The server in this case plays the role of the blockchain in proccessing user requests and approving transactions made by the client. The client provides the user with an user-friendly GUI which should help them navigate their tasks fairly easily.
 
 FuNWallet allows its users to withdrawl or deposit money to and from the wallet (which is currently being presented by a placeholder). Furthermore, it allows education institution to create tution fee requests that students could pay when they have enough in their balance. This application could also double as an application to manage students information, and can be updated as such should the users demand.
+
+![user profile view](https://github.com/Chanchan011/FuNWallet/blob/main/sampleUI/current_debt_view.png)
+![current debt view/tution fee request](https://github.com/Chanchan011/FuNWallet/blob/main/sampleUI/current_debt_view.png)
+![transaction_history_view](https://github.com/Chanchan011/FuNWallet/blob/main/sampleUI/recent_transac_view.png)
 ### Prerequisite
 For Client:
 + .NET version 7.0 or newer
