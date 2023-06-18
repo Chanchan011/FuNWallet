@@ -62,8 +62,8 @@
           <Label FontSize="15">School</Label>
           <TextBox IsReadOnly="True" Text="{Binding Student.School}"></TextBox>
 
-          <Grid ColumnDefinitions="*, *">
-            <Border Margin="0, 0, 20, 0" Grid.Column="0" Classes="NameView">
+          <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, *">
+            <Border Grid.Row="0" Grid.Column="0" Margin="0, 0, 20, 5" Classes="NameView">
               <Grid RowDefinitions="Auto, Auto">
                 <Label FontSize="20" FontWeight="Bold" Grid.Row="0" VerticalContentAlignment="Center">Balance</Label>
                 <Label FontSize="30" Grid.Row="1" VerticalContentAlignment="Center" Content="{Binding Student.Balance, StringFormat='${0}'}"></Label>
@@ -71,11 +71,26 @@
             </Border>
 
             <Border Grid.Column="1" Classes="NameView">
-              <Grid RowDefinitions="Auto, Auto">
+              <Grid Grid.Row="0" RowDefinitions="Auto, Auto">
                 <Label FontSize="20" FontWeight="Bold" Grid.Row="0" VerticalContentAlignment="Center">Debt</Label>
                 <Label FontSize="30" Grid.Row="1" VerticalContentAlignment="Center" Content="{Binding Student.Debt, StringFormat='${0}'}"></Label>
               </Grid>
             </Border>
+
+            <Button Grid.Row="1" Grid.Column="0"
+		          Margin="0, 10, 20, 0"
+		          HorizontalContentAlignment="Center"
+		          HorizontalAlignment="Stretch"
+		          Padding="10" FontSize="15"
+		          Background="#D4D9D9" Foreground="#20312C"
+		          CornerRadius="10" Command="{Binding $parent[Window].DataContext.NavigateToTopUpView}">Top up</Button>
+            <Button Grid.Row="1" Grid.Column="1"
+               Margin="0, 10, 0, 0"
+               HorizontalContentAlignment="Center"
+               HorizontalAlignment="Stretch"
+               Padding="10" FontSize="15"
+               Background="#D4D9D9" Foreground="#20312C"
+               CornerRadius="10" Command="{Binding $parent[Window].DataContext.NavigateToWithdrawView}">Withdraw</Button>
           </Grid>
 
 
@@ -100,7 +115,7 @@
               <Setter Property="BorderThickness" Value="0.5"></Setter>
               <Setter Property="CornerRadius" Value="3"></Setter>
               <Setter Property="Padding" Value="6"></Setter>
-              <Setter Property="Margin" Value="0, 0, 0, 5"></Setter>
+              <Setter Property="Margin" Value="0, 0, 0, 10"></Setter>
             </Style>
           </StackPanel.Styles>
 
@@ -129,6 +144,47 @@
       <TabItem.Header>
         <Image RenderOptions.BitmapInterpolationMode="HighQuality" Width="30" Source="/Assets/history.png"></Image>
       </TabItem.Header>
+      <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#EBE9DE" Margin="-10, 0, -10, 0">
+        <Grid RowDefinitions="Auto, Auto, *">
+          <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Height="80">
+            <Label Grid.Column="0" Margin="10" FontSize="20" FontWeight="Black" Foreground="#0E0C07" VerticalContentAlignment="Center" VerticalAlignment="Center">RECENT TRANSACTIONS</Label>
+          </Grid>
+
+          <StackPanel Margin="10, 0, 10, 0" Grid.Row="2" HorizontalAlignment="Stretch">
+            <StackPanel.Styles>
+              <Style Selector="Border">
+                <Setter Property="Background" Value="White"></Setter>
+                <Setter Property="BorderBrush" Value="#889B9B"></Setter>
+                <Setter Property="BorderThickness" Value="0.5"></Setter>
+                <Setter Property="CornerRadius" Value="3"></Setter>
+                <Setter Property="Padding" Value="6"></Setter>
+                <Setter Property="Margin" Value="0, 0, 0, 10"></Setter>
+              </Style>
+            </StackPanel.Styles>
+
+            <ItemsControl ItemsSource="{Binding Transactions}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border>
+                    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto" ColumnDefinitions="Auto, *, Auto">
+                      <Label FontSize="15" FontWeight="Bold" Grid.Row="0" VerticalContentAlignment="Center" Content="{Binding TransactionID, StringFormat='Transaction {0}'}"></Label>
+                      <Label Grid.Column="0" Grid.Row="1" VerticalContentAlignment="Center">Amount</Label>
+                      <Label Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" HorizontalAlignment="Right" Content="{Binding Amount}"></Label>
+                      <Label Grid.Column="0" Grid.Row="2" VerticalContentAlignment="Center">Student ID</Label>
+                      <Label Grid.Column="1" Grid.Row="2" VerticalContentAlignment="Center" HorizontalAlignment="Right" Content="{Binding StudentID}"></Label>
+                      <Label Grid.Column="0" Grid.Row="3" VerticalContentAlignment="Center">Message</Label>
+                      <Label Grid.Column="1" Grid.Row="3" VerticalContentAlignment="Center" HorizontalAlignment="Right" Content="{Binding Message}"></Label>
+                      <Label Grid.Column="0" Grid.Row="4" VerticalContentAlignment="Center">Status</Label>
+                      <Label Grid.Column="1" Grid.Row="4" VerticalContentAlignment="Center" HorizontalAlignment="Right" Content="{Binding Status}"></Label>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Grid>
+      </ScrollViewer>
+     
     </TabItem>
     
   </TabControl>

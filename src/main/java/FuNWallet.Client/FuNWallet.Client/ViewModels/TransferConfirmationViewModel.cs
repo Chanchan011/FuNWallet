@@ -11,9 +11,9 @@ namespace FuNWallet.Client.ViewModels
 {
     public class TransferConfirmationViewModel: ViewModelBase
     {
-        const string GREEN = "#4BE843";
-        const string RED = "#F96F57";
-        const string YELLOW = "#F2A713";
+        public const string GREEN = "#4BE843";
+        public const string RED = "#F96F57";
+        public const string YELLOW = "#F2A713";
 
         private Transaction t;
         private bool ok = false;
@@ -60,20 +60,20 @@ namespace FuNWallet.Client.ViewModels
             t = transaction;
             status = new VerificationStatus();
 
-            Task.Run(async () =>
+            /*Task.Run(async () =>
             {
                 await Task.Delay(2000);
                 Ok = true;
                 Message = "Status: Transaction approved";
                 StatusColor = GREEN;
-            });
+            });*/
 
 
             /*var okEnabled = this.WhenAnyValue(
                 x => x.Status);*/
 
             Confirm = ReactiveCommand.Create(
-                () => new VerificationStatus { Ok = Status.Ok, Message = Status.Message });
+                () => new VerificationStatus { Ok = this.Ok, Message = this.Message, Amount = t.Amount });
             Back = ReactiveCommand.Create(() => { });
         }
     }

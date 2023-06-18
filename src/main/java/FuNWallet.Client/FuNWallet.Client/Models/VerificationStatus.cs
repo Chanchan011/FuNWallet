@@ -10,5 +10,7 @@ namespace FuNWallet.Client.Models
     {
         public bool Ok { get; set; }
         public string Message { get; set; }
+
+        public double Amount { get; set; }
     }
 }

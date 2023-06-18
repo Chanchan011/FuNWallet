@@ -26,33 +26,36 @@ public class MainViewModel : ViewModelBase
     }
 
     public ObservableCollection<Debt> Debts { get; }
+    public ObservableCollection<Transaction> Transactions { get; }
     public ReactiveCommand<Unit, Debt> PayDebt { get; }
 
-    public MainViewModel(Student student)
+    public MainViewModel(Student student, List<Debt> debts, List<Transaction> transactions)
     {
         this.student = student;
-        var debts = new List<Debt>() { new Debt() { Title = "Semester 2 Tuition Fees", Amount = 100.2, DueDate = DateTime.Now } };
         PayDebt = ReactiveCommand.Create(() => CurrentDebt);
         
-        debts[0].PayCommand = ReactiveCommand.Create(() => debts[0]);
-        debts[0].PayCommand.Subscribe(x => { 
-            CurrentDebt = x; 
-            PayDebt.Execute().Subscribe(); 
-        });
-
-       
-        Debts = new ObservableCollection<Debt>(debts);
+        foreach (var debt in debts)
+        {
+            debt.PayCommand = ReactiveCommand.Create(() => debt);
+            debt.PayCommand.Subscribe(x => {
+                CurrentDebt = x;
+                PayDebt.Execute().Subscribe();
+            });
+        }
         
+        Debts = new ObservableCollection<Debt>(debts);
+        Transactions = new ObservableCollection<Transaction>(transactions);
+        /*
         Task.Run(async () =>
         {
             await Task.Delay(5000);
-            Debts.Add(new Debt() { Title = "Semester 3 Tuition Fees", Amount = 100.2, DueDate = DateTime.Now });
+            Debts.Add(new Debt() { Title = "Semester 3 Tuition Fees", Amount = 100.6, DueDate = DateTime.Now });
             Debts[1].PayCommand = ReactiveCommand.Create(() => Debts[1]);
             Debts[1].PayCommand.Subscribe(x => {
                 CurrentDebt = x;
                 PayDebt.Execute().Subscribe();
             });
             Student.Balance += 100;
-        });
+        });*/
     }
 }

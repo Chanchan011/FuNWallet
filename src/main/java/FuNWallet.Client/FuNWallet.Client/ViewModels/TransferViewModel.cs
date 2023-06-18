@@ -19,6 +19,7 @@ namespace FuNWallet.Client.ViewModels
         private string recipientID;
         private double amount;
         private string message;
+        private string transactionID;
 
         public TransferViewModel()
         {
@@ -27,7 +28,7 @@ namespace FuNWallet.Client.ViewModels
                 x => !string.IsNullOrWhiteSpace(x));
             
             Send = ReactiveCommand.Create(
-                () => new Transaction { RecipientID = RecipientID, Amount = Amount, Message = Message },
+                () => new Transaction { RecipientID = RecipientID, Amount = Amount, Message = Message, TransactionID = this.TransactionID },
                 okEnabled);
             Back = ReactiveCommand.Create(() => { });
         }
@@ -50,6 +51,10 @@ namespace FuNWallet.Client.ViewModels
             set => this.RaiseAndSetIfChanged(ref message, value);
         }
 
-
+        public string TransactionID
+        {
+            get => transactionID;
+            set => this.RaiseAndSetIfChanged(ref transactionID, value);
+        }
     }
 }

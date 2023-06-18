@@ -16,4 +16,10 @@
   <ItemGroup>
     <ProjectReference Include="..\FuNWallet.Client\FuNWallet.Client.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

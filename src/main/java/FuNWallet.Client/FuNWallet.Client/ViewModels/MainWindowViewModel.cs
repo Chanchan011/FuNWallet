@@ -1,7 +1,10 @@
-﻿using FuNWallet.Client.Models;
+﻿using Avalonia.Platform;
+using FuNWallet.Client.Models;
+using FuNWallet.Client.Views;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection.Metadata;
@@ -13,6 +16,8 @@ namespace FuNWallet.Client.ViewModels
     public class MainWindowViewModel: ViewModelBase
     {
         ViewModelBase currentView;
+        SocketClient client;
+
         public MainWindowViewModel()
         {
             currentView = new LoginViewModel();
@@ -26,10 +31,60 @@ namespace FuNWallet.Client.ViewModels
 
         public MainViewModel MainView { get; private set; }
 
+        public void NavigateToTopUpView()
+        {
+            var tvm = new TopupViewModel();
+            tvm.Send.Subscribe(async model =>
+            {
+                if (model != null)
+                {
+                    string res = await client.CreateTransactionAsync(model.Amount);
+                    if (double.TryParse(res, out _))
+                    {
+                        tvm.Message = $"Successfully added {model.Amount} to your account!";
+                        tvm.NotDone = false;
+                        MainView.Student.Balance += model.Amount;
+                    }
+                    else
+                    {
+                        tvm.Message = res;
+                    }
+                }
+            });
+            tvm.Back.Subscribe(x => CurrentView = MainView);
+            CurrentView = tvm;
+        }
+
+        public void NavigateToWithdrawView()
+        {
+            var tvm = new WithdrawViewModel();
+            tvm.Send.Subscribe(async model =>
+            {
+                if (model != null)
+                {
+                    string res = await client.CreateTransactionAsync(-model.Amount);
+                    if (double.TryParse(res, out _))
+                    {
+                        tvm.Message = $"Successfully withdrawed {model.Amount} from your account!";
+                        tvm.NotDone = false;
+                        MainView.Student.Balance -= model.Amount;
+                    }
+                    else
+                    {
+                        tvm.Message = res;
+                    }
+                }
+            });
+            tvm.Back.Subscribe(x => CurrentView = MainView);
+            CurrentView = tvm;
+        }
+
         public void NavigateToTransferView(Debt debt)
         {
             var tvm = new TransferViewModel();
             tvm.Amount = debt.Amount;
+            tvm.Message = debt.Title;
+            tvm.TransactionID = debt.TransactionID;
             tvm.RecipientID = "FUN University";
 
             Observable.Merge(
@@ -41,6 +96,7 @@ namespace FuNWallet.Client.ViewModels
                     if (model != null)
                     {
                         NavigateToTransferConfirmationView(model, tvm);
+                        _ = VerifyTransaction(model);
                     }
 
                     else 
@@ -60,7 +116,7 @@ namespace FuNWallet.Client.ViewModels
                 {
                     if (model != null)
                     {
-                        NavigateToTransferSuccessView();
+                        NavigateToTransferSuccessView(MainView.Student.Balance - model.Amount);
                     }
 
                     else
@@ -74,6 +130,7 @@ namespace FuNWallet.Client.ViewModels
                                 if (model != null)
                                 {
                                     NavigateToTransferConfirmationView(model, tvm);
+                                    _ = VerifyTransaction(model);
                                 }
 
                                 else
@@ -84,27 +141,83 @@ namespace FuNWallet.Client.ViewModels
                 });
             CurrentView = tcvm;
         }
-        public void NavigateToTransferSuccessView()
+        public void NavigateToTransferSuccessView(double balance)
         {
             var tcvm = new TransactionSuccessViewModel();
-            tcvm.Back.Subscribe(x => CurrentView = MainView);
+            tcvm.Back.Subscribe(async x => await ReturnToMainView(balance));
             CurrentView = tcvm;
         }
 
-        public void Login()
+        private async Task VerifyTransaction(Transaction transaction)
         {
-            var studentID = (CurrentView as LoginViewModel).StudentID;
-            var password = (CurrentView as LoginViewModel).Password;
-
-            MainView = new MainViewModel(new Student()
+            var res = await client.ResolveTransactionAsync(transaction);
+            if (double.TryParse(res, out var balance))
             {
-                FullName = "Pham Dam Quan Jr",
-                School = "UEB",
-                ID = 21012122,
-                Balance = 1000,
-                Debt = 500.11,
-                Nationality = "Vietnamese"
-            });
+                var tcvm = CurrentView as TransferConfirmationViewModel;
+                tcvm.Ok = true;
+                tcvm.Message = "Status: Transaction approved";
+                tcvm.StatusColor = TransferConfirmationViewModel.GREEN;
+            }
+            else
+            {
+                var tcvm = CurrentView as TransferConfirmationViewModel;
+                tcvm.Ok = false;
+                tcvm.Message = res;
+                tcvm.StatusColor = TransferConfirmationViewModel.RED;
+            }
+        }
+
+        public async Task Login()
+        {
+            try
+            {
+                var studentID = (CurrentView as LoginViewModel).StudentID;
+                var password = (CurrentView as LoginViewModel).Password;
+                client = new SocketClient(studentID, password);
+                double balance = await client.LoginAsync();
+                if (balance < 0)
+                    // Handle later
+                    return;
+                var student = await client.GetStudentInfo();
+                student.Balance = balance;
+                student.School = "FUN University";
+                var debts = (await client.GetPendingTransactions()).Select(x => new Debt() { Title = x.Message, Amount = Math.Abs(x.Amount), DueDate = DateTime.Today, TransactionID = x.TransactionID });
+                var recentTransactions = await client.GetTransactions();
+                student.Debt = debts.Sum(x => x.Amount);
+
+                MainView = new MainViewModel(student, debts.ToList(), recentTransactions.ToList());
+                MainView.PayDebt.Subscribe(x =>
+                {
+                    if (x != null)
+                    {
+                        NavigateToTransferView(x);
+                    }
+                });
+                CurrentView = MainView;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        public async Task Logout()
+        {
+            await client.LogoutAsync();
+            CurrentView = new LoginViewModel();
+            MainView = null;
+        }
+
+        public async Task ReturnToMainView(double balance)
+        {
+            var student = await client.GetStudentInfo();
+            student.Balance = balance;
+            student.School = "FUN University";
+            var debts = (await client.GetPendingTransactions()).Select(x => new Debt() { Title = x.Message, Amount = Math.Abs(x.Amount), DueDate = DateTime.Today, TransactionID = x.TransactionID });
+            var recentTransactions = await client.GetTransactions();
+            student.Debt = debts.Sum(x => x.Amount);
+
+            MainView = new MainViewModel(student, debts.ToList(), recentTransactions.ToList());
             MainView.PayDebt.Subscribe(x =>
             {
                 if (x != null)
@@ -113,12 +226,6 @@ namespace FuNWallet.Client.ViewModels
                 }
             });
             CurrentView = MainView;
-        }
-
-        public void Logout()
-        {
-            CurrentView = new LoginViewModel();
-            MainView = null;
         }
     }
 }

@@ -13,6 +13,8 @@ namespace FuNWallet.Client.Models
         public string Title { get; set; }
         public double Amount { get; set; }
         public DateTime DueDate { get; set; }
+
+        public string TransactionID { get; set; }
         public ReactiveCommand<Unit, Debt> PayCommand { get; set; }
     }
 }
