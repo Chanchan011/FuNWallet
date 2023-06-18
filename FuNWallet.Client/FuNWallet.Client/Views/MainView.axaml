@@ -1,0 +1,135 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:FuNWallet.Client.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="366" d:DesignHeight="740"
+             Width="366" Height="740"
+             x:Class="FuNWallet.Client.Views.MainView"
+             x:DataType="vm:MainViewModel">
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
+         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <vm:MainViewModel />
+  </Design.DataContext>
+
+  <TabControl TabStripPlacement="Bottom">
+    <TabItem Width="120">
+      <TabItem.Header>
+        <Image RenderOptions.BitmapInterpolationMode="HighQuality" Width="30" Opacity="50" Source="/Assets/user.png"></Image>
+      </TabItem.Header>
+      <Grid RowDefinitions="Auto, Auto, *" Background="#EBE9DE" Margin="-10, 0, -10, 0">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Height="80">
+          <Label Grid.Column="0" Margin="10" FontSize="20" FontWeight="Black" Foreground="#0E0C07" VerticalContentAlignment="Center" VerticalAlignment="Center">STUDENT PROFILE</Label>
+          <Button VerticalAlignment="Center" Margin="10" Background="#D4D9D9" CornerRadius="20" Grid.Column="2" Command="{Binding $parent[Window].DataContext.Logout}">Log out</Button>
+        </Grid>
+
+        <StackPanel Margin="10, 0, 10, 0" Grid.Row="2" HorizontalAlignment="Stretch">
+          <StackPanel.Styles>
+            <Style Selector="Border.NameView">
+              <Setter Property="Background" Value="White"></Setter>
+              <Setter Property="BorderBrush" Value="#889B9B"></Setter>
+              <Setter Property="BorderThickness" Value="0.5"></Setter>
+              <Setter Property="CornerRadius" Value="10"></Setter>
+              <Setter Property="Padding" Value="10"></Setter>
+              <Setter Property="Margin" Value="0, 0, 0, 5"></Setter>
+            </Style>
+            <Style Selector="TextBox">
+              <Setter Property="Background" Value="#EBE9DE"></Setter>
+              <Setter Property="FontSize" Value="15"></Setter>
+            </Style>
+            <Style Selector="TextBox">
+              <Setter Property="Margin" Value="0, 0, 0, 20"></Setter>
+              <Setter Property="CornerRadius" Value="0"></Setter>
+              <Setter Property="BorderThickness" Value="0, 0, 0, 1"></Setter>
+            </Style>
+            <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+              <Setter Property="CornerRadius" Value="0"></Setter>
+              <Setter Property="BorderThickness" Value="0, 0, 0, 1"></Setter>
+            </Style>
+          </StackPanel.Styles>
+
+          <Border Classes="NameView" BoxShadow="5 5 10 1 Gray" Margin="0, 0, 0, 20">
+            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, *">
+              <Image Margin="0, 0, 10, 0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" VerticalAlignment="Stretch" Width="50" RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/user.png"></Image>
+              <Label Grid.Row="0" Grid.Column="1" FontSize="20" FontWeight="10" VerticalContentAlignment="Center" Content="{Binding Student.FullName}"></Label>
+              <Label Foreground="#889B9B" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" Content="{Binding Student.ID, StringFormat='Student ID: {0}'}"></Label>
+            </Grid>
+          </Border>
+
+          <Label FontSize="15">Nationality</Label>
+          <TextBox IsReadOnly="True" Text="{Binding Student.Nationality}"></TextBox>
+          <Label FontSize="15">School</Label>
+          <TextBox IsReadOnly="True" Text="{Binding Student.School}"></TextBox>
+
+          <Grid ColumnDefinitions="*, *">
+            <Border Margin="0, 0, 20, 0" Grid.Column="0" Classes="NameView">
+              <Grid RowDefinitions="Auto, Auto">
+                <Label FontSize="20" FontWeight="Bold" Grid.Row="0" VerticalContentAlignment="Center">Balance</Label>
+                <Label FontSize="30" Grid.Row="1" VerticalContentAlignment="Center" Content="{Binding Student.Balance, StringFormat='${0}'}"></Label>
+              </Grid>
+            </Border>
+
+            <Border Grid.Column="1" Classes="NameView">
+              <Grid RowDefinitions="Auto, Auto">
+                <Label FontSize="20" FontWeight="Bold" Grid.Row="0" VerticalContentAlignment="Center">Debt</Label>
+                <Label FontSize="30" Grid.Row="1" VerticalContentAlignment="Center" Content="{Binding Student.Debt, StringFormat='${0}'}"></Label>
+              </Grid>
+            </Border>
+          </Grid>
+
+
+        </StackPanel>
+      </Grid>
+    </TabItem>
+
+    <TabItem Width="120">
+      <TabItem.Header>
+        <Image RenderOptions.BitmapInterpolationMode="HighQuality" Width="30" Source="/Assets/bill.png"></Image>
+      </TabItem.Header>
+      <Grid RowDefinitions="Auto, Auto, *" Background="#EBE9DE" Margin="-10, 0, -10, 0">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Height="80">
+          <Label Grid.Column="0" Margin="10" FontSize="20" FontWeight="Black" Foreground="#0E0C07" VerticalContentAlignment="Center" VerticalAlignment="Center">CURRENT DEBTS</Label>
+        </Grid>
+
+        <StackPanel Margin="10, 0, 10, 0" Grid.Row="2" HorizontalAlignment="Stretch">
+          <StackPanel.Styles>
+            <Style Selector="Border">
+              <Setter Property="Background" Value="White"></Setter>
+              <Setter Property="BorderBrush" Value="#889B9B"></Setter>
+              <Setter Property="BorderThickness" Value="0.5"></Setter>
+              <Setter Property="CornerRadius" Value="3"></Setter>
+              <Setter Property="Padding" Value="6"></Setter>
+              <Setter Property="Margin" Value="0, 0, 0, 5"></Setter>
+            </Style>
+          </StackPanel.Styles>
+
+          <ItemsControl ItemsSource="{Binding Debts}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border>
+                  <Grid RowDefinitions="Auto, Auto, Auto, Auto" ColumnDefinitions="Auto, *, Auto">
+                    <Label FontSize="15" FontWeight="Bold" Grid.Row="0" VerticalContentAlignment="Center" Content="{Binding Title}"></Label>
+                    <Label Grid.Column="0" Grid.Row="1" VerticalContentAlignment="Center">Pending Amount</Label>
+                    <Label Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" HorizontalAlignment="Right" Content="{Binding Amount, StringFormat='${0}'}"></Label>
+                    <Label Grid.Column="0" Grid.Row="2" VerticalContentAlignment="Center">Due Date</Label>
+                    <Label Grid.Column="1" Grid.Row="2" VerticalContentAlignment="Center" HorizontalAlignment="Right" Content="{Binding DueDate, StringFormat='{}{0:dd-MM-yyyy}'}"></Label>
+                    <Button Grid.Row="3" Grid.ColumnSpan="3" Background="#D4D9D9" Foreground="#20312C" CornerRadius="10" HorizontalAlignment="Center" Command="{Binding PayCommand}">Pay Now</Button>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+         
+        </StackPanel>
+      </Grid>
+    </TabItem>
+    
+    <TabItem Width="120">
+      <TabItem.Header>
+        <Image RenderOptions.BitmapInterpolationMode="HighQuality" Width="30" Source="/Assets/history.png"></Image>
+      </TabItem.Header>
+    </TabItem>
+    
+  </TabControl>
+</UserControl>

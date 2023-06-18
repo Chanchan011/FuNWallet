@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="FuNWallet.Client.Views.TransactionSuccessView">
+  <Grid RowDefinitions="Auto, Auto, Auto" Background="White" Height="400">
+    <Image Grid.Row="0" Source="/Assets/success.png" Height="150" Width="150"></Image>
+    <Label Grid.Row="1" HorizontalAlignment="Center" FontSize="20">Transaction successful!</Label>
+    <Button Grid.Row="2" Command="{Binding Back}"
+     Padding="12"
+     FontSize="20"
+     HorizontalAlignment="Stretch"
+     HorizontalContentAlignment="Center"
+     Background="#D4D9D9"
+     Foreground="#20312C"
+     CornerRadius="20">Return</Button>
+  </Grid>
+</UserControl>

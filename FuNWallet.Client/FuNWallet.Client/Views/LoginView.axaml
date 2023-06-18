@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="FuNWallet.Client.Views.LoginView">
+  <Grid Margin="10, 0, 10, 0" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto" Background="White" Height="400">
+    <Grid.Styles>
+      <Style Selector="Label">
+        <Setter Property="FontSize" Value="15"></Setter>
+      </Style>
+      <Style Selector="TextBox">
+        <Setter Property="FontSize" Value="15"></Setter>
+      </Style>
+      <Style Selector="TextBox">
+        <Setter Property="Margin" Value="0, 0, 0, 20"></Setter>
+        <Setter Property="CornerRadius" Value="0"></Setter>
+        <Setter Property="BorderThickness" Value="0, 0, 0, 1"></Setter>
+      </Style>
+      <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+        <Setter Property="CornerRadius" Value="0"></Setter>
+        <Setter Property="BorderThickness" Value="0, 0, 0, 1"></Setter>
+      </Style>
+    </Grid.Styles>
+    <Image Grid.Row="0" Margin="0, 0, 0, 20" Source="/Assets/funtech.png" Width="150"></Image>
+    <Label Grid.Row="1">Student ID</Label>
+    <TextBox Grid.Row="2" Text="{Binding StudentID}"></TextBox>
+    <Label Grid.Row="3">Password</Label>
+    <TextBox Grid.Row="4" PasswordChar="•" Text="{Binding Password}"></TextBox>
+    <Button Grid.Row="5" 
+     Command="{Binding $parent[Window].DataContext.Login}"
+     Padding="12"
+     FontSize="20"
+     HorizontalAlignment="Stretch"
+     HorizontalContentAlignment="Center"
+     Background="#D4D9D9"
+     Foreground="#20312C"
+     CornerRadius="20">Login</Button>
+  </Grid>
+</UserControl>
